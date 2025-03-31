@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Interactive Flowchart</title>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <style>
+            body {
+                display: flex;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            #flowchart-container {
+                width: 65%;
+                padding: 20px;
+                border-right: 1px solid #ccc;
+                overflow: auto;
+            }
+            #doc-panel {
+                width: 35%;
+                padding: 20px;
+                overflow-y: auto;
+                height: 100vh;
+            }
+            .node {
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="flowchart-container">
+            <div id="mermaid-container"></div>
+        </div>
+        <div id="doc-panel">
+            <h2>Documentation</h2>
+            <div id="doc-content">
+                Click a node in the flowchart to see its documentation.
+            </div>
+        </div>
+
+        <script>
+            mermaid.initialize({ startOnLoad: false });
+
+            const chartDefinition = `flowchart TD
+      subgraph DS[Data Sources]
+        A1[Genius]
+        A2[StatCrew]
+        A3[Record Book]
+        A4[Others]
+      end
+      subgraph ETL[Source-specific ETL]
+        B1[ETL - Genius]
+        B2[ETL - StatCrew]
+        B3[ETL - Record Book]
+        B4[ETL - Others]
+      end
+      A1 --> B1
+      A2 --> B2
+      A3 --> B3
+      A4 --> B4
+      subgraph CDL[Common Data Lake]
+        C1[Entity + StatPeriod Statistics]
+        C2[Player Game Statistics]
+        C3[Player Season Statistics]
+        C4[Player Career Statistics]
+        C5[Team Game Statistics]
+        C6[Team Season Statistics]
+      end
+      B1 --> C1
+      B2 --> C1
+      B3 --> C1
+      B4 --> C1
+      C1 --> C2
+      C1 --> C3
+      C1 --> C4
+      C1 --> C5
+      C1 --> C6
+      C2 --> D[ETL for Event Extraction]
+      C3 --> D
+      C4 --> D
+      C5 --> D
+      C6 --> D
+      D --> E[Atomic Events]
+      subgraph Agg[Aggregations]
+        E --> F[Aggregations]
+        Pop[Populations] --> F
+        F --> Q[Quantiles 10-99%]
+        F --> TB[Time Buckets]
+        F --> AGV[Aggregation Properties]
+        AGV --> SUM
+        AGV --> COUNT
+        AGV --> MAX
+        AGV --> MIN
+        AGV --> MEAN
+        AGV --> STD
+        AGV --> RANK
+      end
+      Q --> TB
+      TB --> Trends
+      subgraph PatternDetection[Patterns]
+        Q --> PT[Patterns]
+        PT --> ST[Streaks]
+        PT --> NT[NTIMES]
+        PT --> LTW[LTW]
+      end
+      subgraph Probabilities[Probability Calculations]
+        MEAN --> EP[Event Prob.]
+        STD --> EP
+        MAX --> MX[Min-Max Prob.]
+        MIN --> MX
+        ST --> STP[Streak Prob.]
+        LTW --> LTP[LTW Prob.]
+        RANK --> RP[Rank Prob.]
+      end
+      STP --> SR[Statistical Rarity]
+      LTP --> SR
+      MX --> SR
+      EP --> SR
+      RP --> SR
+      EX[Social Media Event Popularity] --> I[Interestingness]
+      SR --> I
+      I --> FE[Filtered Events]
+      FE --> TG[Tweet Generation]`;
+
+            const docs = {
+                A1: `### Genius\nAPI-based JSON stats (2014–present).`,
+                A2: `### StatCrew\nLegacy XML format (~1998–2013).`,
+                A3: `### Record Book\nPDF-based, manually extracted.`,
+                A4: `### Others\nFuture/unclassified data sources.`,
+                B1: `### ETL - Genius\nApache Hop ETL to standard format.`,
+                B2: `### ETL - StatCrew\nXML parsed and normalized.`,
+                B3: `### ETL - Record Book\nManual record parsing.`,
+                B4: `### ETL - Others\nHandles additional formats.`,
+                C1: `### Entity + StatPeriod Statistics\nStandard schema linking players/teams with stat periods.`,
+                C2: `### Player Game Statistics\nOne row per player per game.`,
+                C3: `### Player Season Statistics\nSeasonal aggregation.`,
+                C4: `### Player Career Statistics\nCareer-level totals.`,
+                C5: `### Team Game Statistics\nGame performance per team.`,
+                C6: `### Team Season Statistics\nSeason-level summaries.`,
+                D: `### Event Extraction\nConverts structured stats into atomic events.`,
+                E: `### Atomic Events\nFine-grained stat-based events.`,
+                Pop: `### Populations\nContextual groupings of atomic events.`,
+                F: `### Aggregations\nMetrics for stat-population pairs.`,
+                Q: `### Quantiles\nPercentile thresholds for stats.`,
+                TB: `### Time Buckets\nMilestone tracking.`,
+                AGV: `### Aggregation Properties\nIncludes sum, mean, std, rank.`,
+                SUM: `Sum`,
+                COUNT: `Count`,
+                MAX: `Max`,
+                MIN: `Min`,
+                MEAN: `Mean`,
+                STD: `Standard Deviation`,
+                RANK: `Rank`,
+                PT: `### Patterns\nStreaks, NTIMES, LTW detection.`,
+                ST: `### Streaks\nConsecutive games over threshold.`,
+                NT: `### NTIMES\nNon-consecutive over threshold.`,
+                LTW: `### LTW\nLast time condition met.`,
+                EP: `### Event Prob.\nμ, σ-based probability.`,
+                MX: `### Min-Max Prob.\nScaled rarity score.`,
+                STP: `### Streak Prob.\nRarity of streaks.`,
+                LTP: `### LTW Prob.\nTime rarity.`,
+                RP: `### Rank Prob.\nPercentile of value.`,
+                SR: `### Statistical Rarity\nCombined rarity score.`,
+                EX: `### Social Media Event Popularity\nTrending signals.`,
+                I: `### Interestingness\nFunction of rarity + popularity.`,
+                FE: `### Filtered Events\nTop events for publishing.`,
+                TG: `### Tweet Generation\nGenerative AI storytelling.`,
+            };
+
+            mermaid.render("theGraph", chartDefinition).then(({ svg }) => {
+                const container = document.getElementById("mermaid-container");
+                container.innerHTML = svg;
+
+                for (const key in docs) {
+                    const node = container.querySelector(`g[data-id="${key}"]`);
+                    if (node) {
+                        node.style.cursor = "pointer";
+                        node.addEventListener("click", () => {
+                            document.getElementById("doc-content").innerHTML =
+                                marked.parse(docs[key]);
+                        });
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
