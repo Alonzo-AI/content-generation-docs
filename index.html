@@ -125,209 +125,64 @@
             FE --> TG[Tweet Generation]`;
 
             const docs = {
-                A1: `### Genius
-            **Format:** JSON
-            **Coverage:** 2014–present
-            **Granularity:** Game (2014–2020), Quarter (2021–present)
-            **Notes:** API-based stats for football and basketball.`,
-
-                A2: `### StatCrew
-            **Format:** XML
-            **Coverage:** ~1998–2013
-            **Granularity:** Game-level
-            **Notes:** Requires legacy parsers.`,
-
-                A3: `### Record Book
-            **Format:** PDF (Manual extraction)
-            **Coverage:** Varies by school
-            **Granularity:** Aggregated (season/career)
-            **Notes:** Used for historical or individual stats.`,
-
-                A4: `### Others
-            **Format:** Mixed
-            **Coverage:** TBD
-            **Notes:** Placeholder for future sources.`,
-
-                B1: `### ETL - Genius
-            Processed using Apache Hop to normalize JSON into structured relational data.`,
-
-                B2: `### ETL - StatCrew
-            Transforms XML into normalized tables using custom ETL logic.`,
-
-                B3: `### ETL - Record Book
-            Manual extraction pipelines parse PDF-based entries into game/season stats.`,
-
-                B4: `### ETL - Others
-            Designed for handling new or external sources.`,
-
-                C1: `### Entity + StatPeriod Statistics
-            Centralized PostgreSQL schema containing player/team stats across periods.
-
-            **Entity Types:** Player, Team
-            **Stat Periods:** Game, Season, Career
-
-            **Example:**
-            - Entity: \"Trey Benson\"
-            - Period: Season (2023)
-            - Stats: 900 rushing yards, 10 TDs`,
-
-                C2: `### Player Game Statistics
-            Game-by-game stats for each player.
-
-            **Example JSON:**
-            \`{
-              \"playername\": \"BENSON, TREY\",
-              \"teamname\": \"Florida St.\",
-              \"opponentteamname\": \"Virginia Tech\",
-              \"gamedate\": \"2023-10-07\",
-              \"srushingyardsnet\": 200,
-              \"srushingattempts\": 11
-            }\``,
-
-                C3: `### Player Season Statistics
-            Aggregated stats per season.
-
-            **Example:**
-            - Player: Trey Benson
-            - Season: 2023
-            - Rushing Yards: 1200
-            - TDs: 13
-            - Carries: 180`,
-
-                C4: `### Player Career Statistics
-            Player’s cumulative stats across seasons.
-
-            **Example:**
-            - Player: Trey Benson
-            - 2021–2023: 2900 rushing yards, 35 touchdowns`,
-
-                C5: `### Team Game Statistics
-            Per-game stats for team performance.
-
-            **Example:**
-            - Team: Florida State
-            - Opponent: Virginia Tech
-            - Score: 39–17
-            - Total Yards: 502`,
-
-                C6: `### Team Season Statistics
-            Season summary of team-level performance.
-
-            **Example:**
-            - Team: Florida State
-            - Season: 2023
-            - Wins: 11, Losses: 1
-            - Points Scored: 420`,
-
-                D: `### Event Extraction
-            Converts structured records to atomic events.
-
-            **Example Output:**
-            | Player | Date | Stat | Value |
-            |--------|------|------|-------|
-            | Benson | 2023-10-07 | RushingYardsNet | 200 |`,
-
-                E: `### Atomic Events
-            Fine-grained representations of a single stat with context (player, opponent, date).`,
-
-                Pop: `### Populations
-            Groupings used to compute contextual stats.
-
-            **Examples:**
-            - [\"playerID\", \"opponentTeamName\", \"season\"]
-            - [\"teamName\", \"season\"]
-            - [\"position\", \"stat\"]`,
-
-                F: `### Aggregations
-            Computed per (population, stat)
-
-            Includes: sum, count, mean, std, max, min, rank`,
-
-                Q: `### Quantiles
-            Dynamic percentiles (e.g., 10%, 90%) used to define pattern thresholds.
-
-            **Example:**
-            - 90th percentile of rushing yards = 130`,
-
-                TB: `### Time Buckets
-            Track earliest/latest/milestone occurrences in stat timelines.
-
-            **Example:**
-            - Last 150-yard game = Oct 2023`,
-
-                AGV: `### Aggregation Properties
-            Includes all computed statistical metrics used for downstream logic.`,
-
-                SUM: `### Sum
-            Total sum of stat in population.`,
-                COUNT: `### Count
-            Frequency of stat appearances.`,
-                MAX: `### Max
-            Maximum value reached.`,
-                MIN: `### Min
-            Minimum value recorded.`,
-                MEAN: `### Mean
-            Average value for stat.`,
-                STD: `### Std Dev
-            Statistical spread/variability.`,
-                RANK: `### Rank
-            Relative position within population.`,
-
-                PT: `### Patterns
-            Detections of notable performance trends.
-
-            Includes:
-            - Streaks
-            - NTIMES
-            - LTW`,
-
-                ST: `### Streaks
-            Consecutive games with stats above threshold.
-
-            **Example:**
-            - 5 games with 100+ yards`,
-
-                NT: `### NTIMES
-            Non-consecutive occurrences above threshold.
-
-            **Example:**
-            - 8 games in a season with 2+ TDs`,
-
-                LTW: `### LTW
-            Last time a stat exceeded threshold.
-
-            **Example:**
-            - Last 150+ yard game: 2021 vs Clemson`,
-
-                EP: `### Event Probability
-            How rare a stat is using normal distribution (mean, std).`,
-
-                MX: `### Min-Max Probability
-            How close the stat is to all-time min or max.`,
-
-                STP: `### Streak Probability
-            Rarity of current streak based on history.`,
-
-                LTP: `### LTW Probability
-            Rarity of duration since last similar event.`,
-
-                RP: `### Rank Probability
-            Percentile of stat compared to population.`,
-
-                SR: `### Statistical Rarity
-            Combined rarity across all probability types.`,
-
-                EX: `### Social Media Event Popularity
-            Engagement signals from mentions, trends, virality.`,
-
-                I: `### Interestingness
-            Composite score of rarity + popularity to determine narrative potential.`,
-
-                FE: `### Filtered Events
-            Only high-interest stories get passed to generation stage.`,
-
-                TG: `### Tweet Generation
-            Narrative generation using GenAI based on structured event inputs.`,
+                A1: `### Genius\n**Format:** JSON\n**Coverage:** 2014–present\n**Granularity:** Game (2014–2020), Quarter (2021–present)\n**Notes:** API-based stats for football and basketball.`,
+                A2: `### StatCrew\n**Format:** XML\n**Coverage:** ~1998–2013\n**Granularity:** Game-level\n**Notes:** Requires legacy parsers.`,
+                A3: `### Record Book\n**Format:** PDF (Manual extraction)\n**Coverage:** Varies by school\n**Granularity:** Aggregated (season/career)\n**Notes:** Used for historical or individual stats.`,
+                A4: `### Others\n**Format:** Mixed\n**Coverage:** TBD\n**Notes:** Placeholder for future sources.`,
+                B1: `### ETL - Genius\nProcessed using Apache Hop to normalize JSON into structured relational data.`,
+                B2: `### ETL - StatCrew\nTransforms XML into normalized tables using custom ETL logic.`,
+                B3: `### ETL - Record Book\nManual extraction pipelines parse PDF-based entries into game/season stats.`,
+                B4: `### ETL - Others\nDesigned for handling new or external sources.`,
+                C1: `### Entity + StatPeriod Statistics\nCentralized PostgreSQL schema containing player/team stats across periods.
+         **Entity Types:** Player, Team\n**Stat Periods:** Game, Season, Career
+         **Example:**\n\n- Entity: \"Trey Benson\"\n\n- Period: Season (2023)\n\n- Stats: 900 rushing yards, 10 TDs`,
+                C2: `### Player Game Statistics\nGame-by-game stats for each player.
+         **Example JSON:**\n\`{\n  \"playername\": \"BENSON, TREY\",\n  \"teamname\": \"Florida St.\",\n  \"opponentteamname\": \"Virginia Tech\",\n  \"gamedate\": \"2023-10-07\",\n  \"srushingyardsnet\": 200,\n  \"srushingattempts\": 11\n}\``,
+                C3: `### Player Season Statistics\nAggregated stats per season.
+         **Example:**\n- Player: Trey Benson\n- Season: 2023\n- Rushing Yards: 1200\n- TDs: 13\n- Carries: 180`,
+                C4: `### Player Career Statistics\nPlayer’s cumulative stats across seasons.
+         **Example:**\n- Player: Trey Benson\n- 2021–2023: 2900 rushing yards, 35 touchdowns`,
+                C5: `### Team Game Statistics\nPer-game stats for team performance.
+         **Example:**\n- Team: Florida State\n- Opponent: Virginia Tech\n- Score: 39–17\n- Total Yards: 502`,
+                C6: `### Team Season Statistics\nSeason summary of team-level performance.
+         **Example:**\n- Team: Florida State\n- Season: 2023\n- Wins: 11, Losses: 1\n- Points Scored: 420`,
+                D: `### Event Extraction\nConverts structured records to atomic events.
+         **Example Output:**\n| Player | Date | Stat | Value |\n|--------|------|------|-------|\n| Benson | 2023-10-07 | RushingYardsNet | 200 |`,
+                E: `### Atomic Events\nFine-grained representations of a single stat with context (player, opponent, date).`,
+                Pop: `### Populations\nGroupings used to compute contextual stats.
+         **Examples:**\n- [\"playerID\", \"opponentTeamName\", \"season\"]\n- [\"teamName\", \"season\"]\n- [\"position\", \"stat\"]`,
+                F: `### Aggregations\nComputed per (population, stat)
+         Includes: sum, count, mean, std, max, min, rank`,
+                Q: `### Quantiles\nDynamic percentiles (e.g., 10%, 90%) used to define pattern thresholds.
+         **Example:**\n- 90th percentile of rushing yards = 130`,
+                TB: `### Time Buckets\nTrack earliest/latest/milestone occurrences in stat timelines.
+         **Example:**\n- Last 150-yard game = Oct 2023`,
+                AGV: `### Aggregation Properties\nIncludes all computed statistical metrics used for downstream logic.`,
+                SUM: `### Sum\nTotal sum of stat in population.`,
+                COUNT: `### Count\nFrequency of stat appearances.`,
+                MAX: `### Max\nMaximum value reached.`,
+                MIN: `### Min\nMinimum value recorded.`,
+                MEAN: `### Mean\nAverage value for stat.`,
+                STD: `### Std Dev\nStatistical spread/variability.`,
+                RANK: `### Rank\nRelative position within population.`,
+                PT: `### Patterns\nDetections of notable performance trends.
+         Includes:\n- Streaks\n- NTIMES\n- LTW`,
+                ST: `### Streaks\nConsecutive games with stats above threshold.
+         **Example:**\n- 5 games with 100+ yards`,
+                NT: `### NTIMES\nNon-consecutive occurrences above threshold.
+         **Example:**\n- 8 games in a season with 2+ TDs`,
+                LTW: `### LTW\nLast time a stat exceeded threshold.
+         **Example:**\n- Last 150+ yard game: 2021 vs Clemson`,
+                EP: `### Event Probability\nHow rare a stat is using normal distribution (mean, std).`,
+                MX: `### Min-Max Probability\nHow close the stat is to all-time min or max.`,
+                STP: `### Streak Probability\nRarity of current streak based on history.`,
+                LTP: `### LTW Probability\nRarity of duration since last similar event.`,
+                RP: `### Rank Probability\nPercentile of stat compared to population.`,
+                SR: `### Statistical Rarity\nCombined rarity across all probability types.`,
+                EX: `### Social Media Event Popularity\nEngagement signals from mentions, trends, virality.`,
+                I: `### Interestingness\nComposite score of rarity + popularity to determine narrative potential.`,
+                FE: `### Filtered Events\nOnly high-interest stories get passed to generation stage.`,
+                TG: `### Tweet Generation\nNarrative generation using GenAI based on structured event inputs.`,
             };
 
             mermaid.render("theGraph", chartDefinition).then(({ svg }) => {
